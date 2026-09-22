@@ -22,13 +22,23 @@ modelViewer.addEventListener('load', async () => {
         }
     } catch (e) { console.error("Texture preload failed", e); }
 });
+function selectCard(card) {
+    if (isSwitching) return;
+    cards.forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    switchFlavor(card.dataset.flavor);
+}
 cards.forEach(card => {
-    card.addEventListener('click', () => {
-        if (isSwitching) return;
-        cards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        const flavor = card.dataset.flavor;
-        switchFlavor(flavor);
+    card.style.touchAction = 'manipulation';
+    card.addEventListener('click', (e) => {
+        e.preventDefault();
+        selectCard(card);
+    });
+    card.addEventListener('pointerup', (e) => {
+        if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+            e.preventDefault();
+            selectCard(card);
+        }
     });
 });
 async function switchFlavor(flavor) {
@@ -120,7 +130,7 @@ async function switchFlavor(flavor) {
             ease: "power2.in",
             onComplete: () => {
                 berry.src = flavor === 'blue' ? 'https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/blueberry.glb' : 'https://api.getlayers.ai/storage/v1/object/public/public/assets/soda-14ff8a788d/cherry.glb';
-                heroCenter.style.zIndex = 50;
+                heroCenter.style.zIndex = 10;
             }
         })
         .to(berry, {
